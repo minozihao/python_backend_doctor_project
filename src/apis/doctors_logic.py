@@ -39,8 +39,7 @@ class DoctorLogic:
         with Session(engine) as session:
             statement = select(Doctor).join(Category, isouter=True
                                             ).join(PriceRange, isouter=True
-                                                   ).join(Schedule, isouter=True
-                                                          ).join(Address, isouter=True).join(AddressCN, isouter=True)
+                                                   ).join(Address, isouter=True)
             if category and category != "":
                 statement = statement.where(Category.name == category)
             if price_range and price_range != "":

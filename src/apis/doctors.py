@@ -3,7 +3,6 @@ from typing import List
 
 from src.models.dtos import CreateDoctorReqDTO, GetDoctorDTO, QueryDoctorsDTO, DefaultResponseDTO
 from src.logger import log
-from src.utils import get_request_context_correlation_id, get_request_context_request_id
 from .doctors_logic import DoctorLogic
 
 doctor_router = APIRouter()
@@ -39,7 +38,7 @@ async def query_doctors(request: Request, response: Response, district: str | No
              f' price range: [{price_range}]. language: [{language}]')
     resp = QueryDoctorsDTO()
     # payload validation
-    if language and (language != "en" or language != "cn"):
+    if language and language != "en" and language != "cn":
         response.status_code = status.HTTP_400_BAD_REQUEST
         resp.err_message = 'unexpected language code'
         return resp
@@ -49,6 +48,7 @@ async def query_doctors(request: Request, response: Response, district: str | No
         logic = DoctorLogic()
         doctors = logic.query_doctors(district, category, price_range, language)
         resp.data = doctors
+        resp.rows = len(doctors)
         return resp
     except Exception as e:
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR

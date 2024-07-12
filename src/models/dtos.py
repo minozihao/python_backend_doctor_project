@@ -66,7 +66,8 @@ class GetDoctorDTO(BaseModel):
 
 
 class QueryDoctorsDTO(BaseModel):
-    data: list[DoctorDTO]
+    data: list[DoctorDTO] = []
+    rows: int = 0
     err_message: str = ''
 
 
