@@ -37,7 +37,9 @@ class RequestFilter(logging.Filter):
 
 handler = logging.StreamHandler()
 handler.addFilter(RequestFilter())
-
+LOG_FORMAT = logging.Formatter(
+    """{"message":"%(message)s","time":"%(asctime)s","level":"%(levelname)s","file":"%(filename)s","lineno":"%(lineno)d", "method":"%(funcName)s", "xid":"%(request_id)s"}""")
+handler.setFormatter(LOG_FORMAT)
 log = logging.getLogger("")
 log.setLevel(logging.DEBUG)
 log.addHandler(handler)

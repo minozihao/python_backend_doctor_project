@@ -3,9 +3,16 @@ from typing import List
 
 from src.models.dtos import CreateDoctorReqDTO, GetDoctorDTO, QueryDoctorsDTO, DefaultResponseDTO
 from src.logger import log
-from .doctors_logic import DoctorLogic
+from src.apis.doctors_logic import DoctorLogic
+from src.apis.doctors_logic_mock import DoctorLogicMock
 
 doctor_router = APIRouter()
+
+
+def get_doctor_logic(request: Request):
+    if request.headers.get('env') == 'test':
+        return DoctorLogicMock()
+    return DoctorLogic()
 
 
 @doctor_router.get(path='/{id}', status_code=status.HTTP_200_OK, response_model=GetDoctorDTO)
@@ -18,7 +25,7 @@ async def get_doctor_by_id(request: Request, response: Response, id: int) -> Get
         resp.err_message = 'invalid doctor id'
         return resp
     try:
-        logic = DoctorLogic()
+        logic = get_doctor_logic(request)
         doctor = logic.get_doctor_by_id(id)
         if doctor is None:
             resp.err_message = 'id not found'
@@ -45,7 +52,7 @@ async def query_doctors(request: Request, response: Response, district: str | No
     if not language:
         language = 'en'
     try:
-        logic = DoctorLogic()
+        logic = get_doctor_logic(request)
         doctors = logic.query_doctors(district, category, price_range, language)
         resp.data = doctors
         resp.rows = len(doctors)
@@ -69,7 +76,7 @@ async def create_doctors(request: Request, response: Response, doctors: List[Cre
         resp.err_message = 'limit 500 entity reached'
         return resp
     try:
-        logic = DoctorLogic()
+        logic = get_doctor_logic(request)
         logic.create_doctors(doctors)
         return resp
     except Exception as e:

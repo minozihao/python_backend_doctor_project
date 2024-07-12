@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from apis.doctors import doctor_router
+from src.apis.doctors import doctor_router
 
 DOCTOR_URL_PREFIX = '/doctor'
 

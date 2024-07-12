@@ -1,11 +1,11 @@
-from typing import List
 from sqlmodel import Session, select
 
 from src.models.dtos import CreateDoctorReqDTO, DoctorDTO, CategoryDTO, AddressDTO, ScheduleDTO
 from src.models.orms import engine, Doctor, PriceRange, Category, Schedule, Address, AddressCN
+from src.apis.doctors_interface import DoctorLogicAbs
 
 
-class DoctorLogic:
+class DoctorLogic(DoctorLogicAbs):
 
     def get_doctor_by_id(self, id) -> DoctorDTO | None:
         with Session(engine) as session:
@@ -27,7 +27,7 @@ class DoctorLogic:
             return dto
 
     def query_doctors(self, district: str | None, category: str | None, price_range: str | None,
-                      language: str) -> List[DoctorDTO]:
+                      language: str) -> list[DoctorDTO]:
         """
         query doctors based on parameter. assume language takes value 'en', 'cn'
         :param district:
@@ -77,7 +77,7 @@ class DoctorLogic:
 
             return results
 
-    def create_doctors(self, doctors: List[CreateDoctorReqDTO]) -> None:
+    def create_doctors(self, doctors: list[CreateDoctorReqDTO]) -> None:
         """
         create doctors to db from payload
         :param doctors: list of CreateDoctorReqDTO request payload
@@ -140,7 +140,7 @@ class DoctorLogic:
                 new_addr = Address(doctor_id=new_d.id, street=d.street, room=d.room, district=d.district, city=d.city)
                 new_addresses.append(new_addr)
                 new_addr_cn = AddressCN(doctor_id=new_d.id, street=d.street_cn, room=d.room_cn, district=d.district_cn,
-                                      city=d.city_cn)
+                                        city=d.city_cn)
                 new_addresses_cn.append(new_addr_cn)
                 # create doctor schedules
                 new_ss = [Schedule(doctor_id=new_d.id, day_in_week='monday', working_hours=d.schedule_monday),

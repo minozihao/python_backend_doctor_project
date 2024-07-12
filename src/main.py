@@ -1,8 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
 
-from router import init_router
-from middleware import middleware_init
+from src.router import init_router
+from src.middleware import middleware_init
 
 
 def start_app(*args_debug) -> FastAPI:
